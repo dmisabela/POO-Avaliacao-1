@@ -1,0 +1,123 @@
+<%-- any content can be specified here e.g.: --%>
+<%@page import="java.util.Collections"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.util.List"%>
+<%@ page pageEncoding="UTF-8" %>
+<%
+  
+    ServletContext contexto = request.getServletContext(); 
+    String sessionName = (String) session.getAttribute("session-name");
+    
+    List<String> usuariosAtivos = (List) contexto.getAttribute("usuarios_ativos");
+
+if (request.getParameter("session-login") != null) {
+    session.setAttribute("session-name", request.getParameter("session-name"));
+    session.setAttribute("counter", 0); 
+    
+    if (usuariosAtivos != null) {
+        usuariosAtivos.add(request.getParameter("session-name"));
+        contexto.setAttribute("usuarios_ativos", usuariosAtivos);
+    }
+    else {
+        List<String> ativos = new ArrayList<>();
+        ativos.add(request.getParameter("session-name")); 
+        contexto.setAttribute("usuarios_ativos", ativos);
+    }
+    
+    
+    response.sendRedirect(request.getRequestURI());
+}
+
+else if (request.getParameter("session-logout") != null){
+    session.removeAttribute("session-name");
+    usuariosAtivos.remove(usuariosAtivos.indexOf(sessionName));
+    response.sendRedirect(request.getRequestURI());
+    
+}
+
+int sessionCounter = 0; 
+
+if (session.getAttribute("counter") != null) {
+    sessionCounter = (int) session.getAttribute("counter"); 
+    session.setAttribute("counter", sessionCounter +1);
+}
+
+List<Integer> lista = new ArrayList(); 
+ArrayList sessionNumbers = new ArrayList(); 
+
+String numbers = "";
+
+if (sessionCounter <=1) {
+    for (int x = 1; x < 61; x++) {
+    lista.add(x); 
+}
+    Collections.shuffle(lista);
+    session.setAttribute(numbers, lista);
+}
+
+sessionNumbers = (ArrayList)session.getAttribute(numbers);
+
+
+%>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+
+<nav class="navbar navbar-expand-sm navbar-light bg-light">
+    <a class="navbar-brand p-2" href="<%= request.getContextPath()%>/index.jsp">Isabela Duarte</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Alterna navegação">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+
+
+        <div class="col-md-12">
+            <form class="form-signin" method="post"> 
+
+                <%if (sessionName == null) {%>
+
+                <input type="text" name="session-name" placeholder="Entre com seu nome" required/>
+                <input type ="submit" class="btn p-1" name="session-login" value="Login"/>
+
+                <%}%>
+
+                <% if (sessionName != null) {%>
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link p-2" href="<%= request.getContextPath()%>/index.jsp">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link p-2" href="<%= request.getContextPath()%>/isabela.jsp">Isabela</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link p-2" href="<%= request.getContextPath()%>/isabela-dica-megasena.jsp">MegaSena</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link p-1" href="#">Bem vindo(a), <%=sessionName%>
+                            <button class="btn p-1" type="submit" name="session-logout">Logout</button>
+                        </a>                
+                    </li>
+            </form>
+            <%}%>
+        </div>
+
+        </ul>
+    </div>
+</nav>
+        
+        
+<style>
+
+    .btn {
+        background-color: #DDA0DD;
+        padding: 0px;
+        font-weight: 700;
+        font-size: 14px;
+        height: 36px;
+        border-radius: 3px;
+        border: none;
+        color: white;
+    }
+
+
+</style>
